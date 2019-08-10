@@ -1,0 +1,87 @@
+package main;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+public class AppPanel extends JPanel implements Runnable, KeyListener {
+
+    public static final int WIDTH = 1280, HEIGHT = 800;
+
+    Thread t;
+    boolean running;
+
+    DVD dvd;
+    static int count = 0;
+
+    AppPanel() {
+
+        setFocusable(true);
+        addKeyListener(this);
+        setPreferredSize(new Dimension(WIDTH,HEIGHT));
+
+        dvd = new DVD();
+
+        start();
+
+    }
+
+    void start() {
+        running = true;
+        t = new Thread(this);
+        try {
+            t.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void stop() {
+        running = false;
+        try {
+            t.join();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void tick() {
+        dvd.detection();
+        dvd.tick();
+    }
+
+    public void paint(Graphics g) {
+        g.setColor(new Color(0));
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+        dvd.draw(g);
+    }
+
+    @Override
+    public void run() {
+        while (running) {
+            repaint();
+            tick();
+            try {
+                Thread.sleep(1000/120);
+            } catch (InterruptedException e) {
+            }
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
+}
+
